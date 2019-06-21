@@ -2,6 +2,6 @@
 {
     public interface ISortable
     {
-        void Order(int[,] arr, Direction d);
+        void Sort(int[,] arr, Direction d);
     }
 }
