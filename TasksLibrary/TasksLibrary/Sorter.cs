@@ -10,7 +10,7 @@
 
     public abstract class Sorter : Evaluator
     {
-        protected void SwapRows(int[,] array, int row1, int row2)
+        private void SwapRows(int[,] array, int row1, int row2)
         {
             for (int i = 0; i < array.GetLength(1); i++)
             {
@@ -26,7 +26,7 @@
         /// <param name="arr">Input matrix.</param>
         /// <param name="evaluate">Evaluation method.</param>
         /// <returns>Rows estimates.</returns>
-        protected RowInfo[] CalculateInfo(int[,] arr, Evaluator evaluator)
+        private RowInfo[] CalculateInfo(int[,] arr, Evaluator evaluator)
         {
             var rows = arr.GetLength(0);
             var columns = arr.GetLength(1);
@@ -45,8 +45,10 @@
         /// <param name="arr">Input matrix.</param>
         /// <param name="rowsInfo">Row information i.e.data that evaluate the row.</param>
         /// <param name="d">Ordering Method (Ascending / Descending).</param>
-        protected void BubbleSort(int[,] arr, RowInfo[] rowsInfo, Direction d)
+        protected void BubbleSort(int[,] arr, Evaluator sortClass, Direction d)
         {
+            var rowsInfo = CalculateInfo(arr, sortClass);
+
             var rows = arr.GetLength(0);
             var columns = arr.GetLength(1);
 
@@ -78,7 +80,7 @@
                 }
         }
 
-        protected class RowInfo
+        private class RowInfo
         {
             public int RowIndex { get; set; }
             public int[] RowEigenvalues { get; set; }
@@ -98,10 +100,20 @@
         /// </summary>
         /// <param name="arr">Input matrix.</param>
         /// <param name="d">Ordering Method (Ascending / Descending).</param>
-        public void Order(int[,] arr, Direction d)
+        public void Sort(int[,] arr, Direction d)
         {
-            var info = CalculateInfo(arr, new SumEvaluator());
-            BubbleSort(arr, info, d);
+            BubbleSort(arr, this, d);
+        }
+
+        public override int[] Evaluate(int[,] arr, int row)
+        {
+            var columnsCount = arr.GetLength(1);
+            var sum = new int[columnsCount];
+
+            for (int i = 0; i < columnsCount; i++)
+                sum[0] += arr[row, i];
+
+            return sum.Select(x => sum[0]).ToArray();
         }
     }
 
@@ -112,10 +124,22 @@
         /// </summary>
         /// <param name="arr">Input matrix.</param>
         /// <param name="d">Ordering Method (Ascending / Descending).</param>
-        public void Order(int[,] arr, Direction d)
+        public void Sort(int[,] arr, Direction d)
         {
-            var info = CalculateInfo(arr, new MaxEvaluator());
-            BubbleSort(arr, info, d);
+            BubbleSort(arr, this, d);
+        }
+
+        public override int[] Evaluate(int[,] arr, int row)
+        {
+            var columnsCount = arr.GetLength(1);
+            var maximums = new int[columnsCount];
+
+            for (int i = 0; i < columnsCount; i++)
+                maximums[i] = arr[row, i];
+
+            BubbleSort(maximums, Direction.Descending);
+
+            return maximums;
         }
     }
 
@@ -126,10 +150,22 @@
         /// </summary>
         /// <param name="arr">Input matrix.</param>
         /// <param name="d">Ordering Method (Ascending / Descending).</param>
-        public void Order(int[,] arr, Direction d)
+        public void Sort(int[,] arr, Direction d)
         {
-            var info = CalculateInfo(arr, new MinEvaluator());
-            BubbleSort(arr, info, d);
+            BubbleSort(arr, this, d);
+        }
+
+        public override int[] Evaluate(int[,] arr, int row)
+        {
+            var columnsCount = arr.GetLength(1);
+            var minimums = new int[columnsCount];
+
+            for (int i = 0; i < columnsCount; i++)
+                minimums[i] = arr[row, i];
+
+            BubbleSort(minimums, Direction.Ascending);
+
+            return minimums;
         }
     }
 }
