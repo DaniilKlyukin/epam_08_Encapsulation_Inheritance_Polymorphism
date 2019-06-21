@@ -1,11 +1,11 @@
 ﻿namespace Tests
 {
     using MSUnitTest = Microsoft.VisualStudio.TestTools.UnitTesting;
-    using TasksLibrary;
     using NUnit.Framework;
+    using TasksLibrary;
 
-    [TestFixture]
     [MSUnitTest.TestClass]
+    [TestFixture]
     class BubbleSortTests
     {
         TaskWorker tWorker = new TaskWorker();
@@ -23,7 +23,7 @@
                         {3,4 },
                         {0,5 }
                     },
-                    OrderMethod = new SortByRowSum(),
+                    SortMethod = new SortByRowSum(),
                     Direction = Direction.Descending,
                     ExpectedArray = new int[,]
                     {
@@ -40,7 +40,7 @@
                         {3,4 },
                         {0,5 }
                     },
-                    OrderMethod = new SortByRowSum(),
+                    SortMethod = new SortByRowSum(),
                     Direction = Direction.Ascending,
                     ExpectedArray = new int[,]
                     {
@@ -56,7 +56,7 @@
                         {int.MaxValue,int.MinValue },
                         {int.MinValue,int.MaxValue }
                     },
-                    OrderMethod = new SortByRowSum(),
+                    SortMethod = new SortByRowSum(),
                     Direction = Direction.Descending,
                     ExpectedArray = new int[,]
                     {
@@ -82,7 +82,7 @@
                         {3,4,50 },
                         {0,5,49 }
                     },
-                    OrderMethod = new SortByRowMaxElement(),
+                    SortMethod = new SortByRowMaxElement(),
                     Direction = Direction.Descending,
                     ExpectedArray = new int[,]
                     {
@@ -99,7 +99,7 @@
                         {-3,4,3,4 },
                         {0,2,-1,4 }
                     },
-                    OrderMethod = new SortByRowMaxElement(),
+                    SortMethod = new SortByRowMaxElement(),
                     Direction = Direction.Descending,
                     ExpectedArray = new int[,]
                     {
@@ -116,7 +116,7 @@
                         {4,3,2,1,-1 },
                         {4,3,2,1,-2 }
                     },
-                    OrderMethod = new SortByRowMaxElement(),
+                    SortMethod = new SortByRowMaxElement(),
                     Direction = Direction.Ascending,
                     ExpectedArray = new int[,]
                     {
@@ -146,7 +146,7 @@
                         {0,1 },
                         {1,3 }
                     },
-                    OrderMethod = new SortByRowMinElement(),
+                    SortMethod = new SortByRowMinElement(),
                     Direction = Direction.Descending,
                     ExpectedArray = new int[,]
                     {
@@ -166,7 +166,7 @@
                         {3},
                         {0}
                     },
-                    OrderMethod = new SortByRowMinElement(),
+                    SortMethod = new SortByRowMinElement(),
                     Direction = Direction.Ascending,
                     ExpectedArray = new int[,]
                     {
@@ -181,7 +181,7 @@
                     {
                         {1}
                     },
-                    OrderMethod = new SortByRowMinElement(),
+                    SortMethod = new SortByRowMinElement(),
                     Direction = Direction.Ascending,
                     ExpectedArray = new int[,]
                     {
@@ -198,8 +198,8 @@
             foreach (var t in testData)
             {
                 var array = t.ActualArray;
-                tWorker.BubbleSort(array, t.OrderMethod, t.Direction);
-                CollectionAssert.AreEqual(t.ExpectedArray, array);
+                tWorker.BubbleSort(array, t.SortMethod, t.Direction);
+                MSUnitTest.CollectionAssert.AreEqual(t.ExpectedArray, array);
             }
         }
     }
@@ -208,7 +208,7 @@
     {
         public int[,] ActualArray { get; set; }
         public int[,] ExpectedArray { get; set; }
-        public ISortable OrderMethod { get; set; }
+        public ISortable SortMethod { get; set; }
         public Direction Direction { get; set; }
     }
 }
