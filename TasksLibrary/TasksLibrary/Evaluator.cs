@@ -1,7 +1,5 @@
 ﻿namespace TasksLibrary
 {
-    using System.Linq;
-
     public abstract class Evaluator
     {
         public void BubbleSort(int[] arr, Direction d)
@@ -21,55 +19,6 @@
             arr[j] = temp;
         }
 
-        public virtual int[] Evaluate(int[,] arr, int row)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    public class MaxEvaluator : Evaluator
-    {
-        public override int[] Evaluate(int[,] arr, int row)
-        {
-            var columnsCount = arr.GetLength(1);
-            var maximums = new int[columnsCount];
-
-            for (int i = 0; i < columnsCount; i++)
-                maximums[i] = arr[row, i];
-
-            BubbleSort(maximums, Direction.Descending);
-
-            return maximums;
-        }
-    }
-
-    public class MinEvaluator : Evaluator
-    {
-        public override int[] Evaluate(int[,] arr, int row)
-        {
-            var columnsCount = arr.GetLength(1);
-            var minimums = new int[columnsCount];
-
-            for (int i = 0; i < columnsCount; i++)
-                minimums[i] = arr[row, i];
-
-            BubbleSort(minimums, Direction.Ascending);
-
-            return minimums;
-        }
-    }
-
-    public class SumEvaluator : Evaluator
-    {
-        public override int[] Evaluate(int[,] arr, int row)
-        {
-            var columnsCount = arr.GetLength(1);
-            var sum = new int[columnsCount];
-
-            for (int i = 0; i < columnsCount; i++)
-                sum[0] += arr[row, i];
-
-            return sum.Select(x => sum[0]).ToArray();
-        }
+        public abstract int[] Evaluate(int[,] arr, int row);
     }
 }
