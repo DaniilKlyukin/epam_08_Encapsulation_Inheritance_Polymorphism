@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="Tests.BubbleSortTests.CheckBubbleSortBySum" /><Add Test="Tests.BubbleSortTests.CheckBubbleSortByMaxElement" /><Add Test="Tests.BubbleSortTests.CheckBubbleSortByMinElement" /></Playlist>
