@@ -166,6 +166,21 @@
 
             return builder.ToString();
         }
+
+        public override int GetHashCode()
+        {
+            var hash = 0;
+
+            for (int i = 0; i <= this.Degree; i++)
+                hash += (int)Math.Pow(this[i], i);
+
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return this.CompareTo((Polynomial)obj) == 0;
+        }
     }
 
     public static class EnumerableExtensions
