@@ -45,6 +45,7 @@
     <Compile Include="Task1\Sorter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Task2\Shape.cs" />
+    <Compile Include="Task3\Polynomial.cs" />
     <Compile Include="TaskWorker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
