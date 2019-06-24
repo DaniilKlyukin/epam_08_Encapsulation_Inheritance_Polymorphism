@@ -36,20 +36,14 @@
             }
         }
 
-        public Polynomial(uint degree)
+        public Polynomial(int degree)
         {
-            if (degree == 0)
-                throw new ArgumentException();
-
             Coefficients = new double[degree + 1];
         }
 
-        public Polynomial(params double[] otherCoefficients)
+        public Polynomial(double[] otherCoefficients)
         {
             var length = otherCoefficients.Length;
-
-            if (length == 1)
-                throw new ArgumentException("Degree must be greater then 0");
 
             Coefficients = new double[length];
 
@@ -62,10 +56,13 @@
             if (this.Degree != other.Degree)
                 return this.Degree.CompareTo(other.Degree);
 
-            var lastThis = this[this.Degree];
-            var lastOther = other[other.Degree];
+            for (int i = other.Degree; i >= 0; i--)
+            {
+                if (this[i] != other[i])
+                    return this[i].CompareTo(other[i]);
+            }
 
-            return lastThis.CompareTo(lastOther);
+            return 0;
         }
 
         public IEnumerator<double> GetEnumerator()
@@ -83,18 +80,18 @@
             var degree = Math.Max(first.Degree, second.Degree);
             var length = degree + 1;
 
-            var result = new Polynomial(length);
+            var result = new Polynomial(degree);
 
             for (int i = 0; i < length; i++)
             {
-                if (i < first.Degree)
+                if (i <= first.Degree)
                     result[i] += first[i];
 
-                if (i < second.Degree)
+                if (i <= second.Degree)
                     result[i] += second[i];
             }
 
-            return result;
+            return result.Simplify();
         }
 
         public static Polynomial operator -(Polynomial first, Polynomial second)
@@ -103,7 +100,8 @@
         public static Polynomial operator *(Polynomial poly, double factor)
             => poly
                 .Select(x => x * factor)
-                .ToPolynomial();
+                .ToPolynomial()
+                .Simplify();
 
         public static Polynomial operator *(double factor, Polynomial poly)
             => poly * factor;
@@ -111,14 +109,15 @@
         public static Polynomial operator /(Polynomial poly, double divider)
             => poly
                 .Select(x => x / divider)
-                .ToPolynomial();
+                .ToPolynomial()
+                .Simplify();
 
         public static Polynomial operator *(Polynomial first, Polynomial second)
         {
             var degree = first.Degree + second.Degree;
             var length = degree + 1;
 
-            var result = new Polynomial(length);
+            var result = new Polynomial(degree);
 
             for (int i = 0; i <= first.Degree; i++)
             {
@@ -128,7 +127,7 @@
                 }
             }
 
-            return result;
+            return result.Simplify();
         }
 
         public static bool operator >(Polynomial first, Polynomial second)
@@ -149,6 +148,17 @@
         public static bool operator <=(Polynomial first, Polynomial second)
             => first.CompareTo(second) != 1 ? true : false;
 
+        private Polynomial Simplify()
+        {
+            var degree = this.Degree;
+            var newPoly = new Polynomial(degree);
+
+            for (int i = 0; i <= degree; i++)
+                newPoly[i] = this[i];
+
+            return newPoly;
+        }
+
         public override string ToString()
         {
             var builder = new StringBuilder();
@@ -158,10 +168,21 @@
                 if (i > 0 && this[i] > 0)
                     builder.Append("+");
 
-                if (Math.Abs(this[i]) == 1)
-                    builder.Append($"x^{i}");
-                else if (this[i] != 0)
-                    builder.Append($"{this[i]}x^{i}");
+                if (this[i] == -1)
+                    builder.Append("-");
+
+                if (Math.Abs(this[i]) != 1 && this[i] != 0)
+                {
+                    builder.Append($"{this[i]}");
+                }
+                if (this[i] != 0)
+                {
+                    if (i > 0)
+                        builder.Append($"x");
+
+                    if (i > 1)
+                        builder.Append($"^{i}");
+                }
             }
 
             return builder.ToString();
