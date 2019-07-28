@@ -1,5 +1,6 @@
 ﻿using TasksLibrary;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Tests
 {
@@ -7,6 +8,32 @@ namespace Tests
     [TestFixture]
     public class PolynomialTests
     {
+        [Test]
+        public void PolySimpleInitializationTest()
+        {
+            var p1 = new Polynomial(new Dictionary<int, double>() { { 46, 3 }, { 0, 1 } }); // 3*x^46 + 1
+
+            var p2 = new Polynomial(new Dictionary<int, double>() { { 28, 7 }, { 1, 2 } }); // 7*x^28 + 2*x
+
+            CollectionAssert.AreEqual(new Polynomial(new Dictionary<int, double>() { { 46, 3 }, { 28, 7 }, { 1, 2 }, { 0, 1 } }), p1 + p2);
+        }
+
+        [Test]
+        public void PolyDivisionTest()
+        {
+            var p1 = new Polynomial(new Dictionary<int, double>() { { 3, 1 }, { 2, -12 }, { 0, -42 } }); // x^3 - 12*x^2 - 42
+
+            var p2 = new Polynomial(new Dictionary<int, double>() { { 1, 1 }, { 0, -3 } }); // x - 3
+
+            var p3 = p1 / p2; // x^2 - 9*x - 27 - 123 / (x-3)
+
+            CollectionAssert.AreEqual(
+                new Polynomial(new Dictionary<int, double>() { { 2, 1 }, { 1, -9 }, { 0, -27 } }), p3.Item1);
+
+            CollectionAssert.AreEqual(
+                new Polynomial(new Dictionary<int, double>() { { 0, -123 } }), p3.Item2);
+        }
+
         [TestCase(new double[] { 7, 3, 1 }, new double[] { -7, -3, -1 }, ExpectedResult = new double[] { 0 })]
         [TestCase(new double[] { 7, 3, 1 }, new double[] { 10, 1 }, ExpectedResult = new double[] { 17, 4, 1 })]
         [TestCase(new double[] { 3, 2 }, new double[] { 1, 4, 10 }, ExpectedResult = new double[] { 4, 6, 10 })]
