@@ -8,8 +8,12 @@
         Descending = -1
     }
 
+    public delegate bool Comparer(int value1, int value2, Direction d);
+
     public abstract class Sorter : Evaluator
     {
+        Comparer comp = (v1, v2, d) => v1.CompareTo(v2) == (int)d;
+
         private void SwapRows(int[,] array, int row1, int row2)
         {
             for (int i = 0; i < array.GetLength(1); i++)
@@ -57,12 +61,12 @@
                 {
                     for (int v = 0; v < columns; v++)
                     {
-                        var condition = rowsInfo[j].RowEigenvalues[v].CompareTo(rowsInfo[i].RowEigenvalues[v]);
+                        var condition = comp(rowsInfo[j].RowEigenvalues[v], rowsInfo[i].RowEigenvalues[v], d);
 
-                        if (condition == (int)d)
+                        if (condition)
                             Swap(rowsInfo, i, j);
 
-                        if (condition != 0)
+                        if (rowsInfo[j].RowEigenvalues[v] != rowsInfo[i].RowEigenvalues[v])
                             break;
                     }
                 }
