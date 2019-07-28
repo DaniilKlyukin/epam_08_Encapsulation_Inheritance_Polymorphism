@@ -36,19 +36,57 @@
             }
         }
 
+        private double[] FilterArray(double[] coefficients)
+        {
+            var length = coefficients.Length;
+            for (int i = coefficients.Length - 1; i >= 0; i--)
+            {
+                if (coefficients[i] != 0)
+                {
+                    length = i + 1;
+                    break;
+                }
+            }
+
+            var result = new double[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = coefficients[i];
+            }
+
+            return result;
+        }
+
         public Polynomial(int degree)
         {
             Coefficients = new double[degree + 1];
         }
 
-        public Polynomial(double[] otherCoefficients)
+        public Polynomial(double[] coefficients)
         {
-            var length = otherCoefficients.Length;
+            coefficients = FilterArray(coefficients);
+
+            var length = coefficients.Length;
 
             Coefficients = new double[length];
 
             for (int i = 0; i < length; i++)
-                Coefficients[i] = otherCoefficients[i];
+            {
+                Coefficients[i] = coefficients[i];
+            }
+        }
+
+        public Polynomial(Dictionary<int, double> coefficients)
+        {
+            var length = coefficients.Keys.Max() + 1;
+
+            Coefficients = new double[length];
+
+            foreach (var c in coefficients)
+            {
+                Coefficients[c.Key] = c.Value;
+            }
         }
 
         public int CompareTo(Polynomial other)
@@ -130,6 +168,23 @@
             return result.Simplify();
         }
 
+        public static Tuple<Polynomial, Polynomial> operator /(Polynomial first, Polynomial second)
+        {
+            var remainder = (double[])first.Coefficients.Clone();
+            var quotient = new double[remainder.Length - second.Coefficients.Length + 1];
+            for (int i = 0; i < quotient.Length; i++)
+            {
+                double coeff = remainder[remainder.Length - i - 1] / first.Coefficients.Last();
+                quotient[quotient.Length - i - 1] = coeff;
+                for (int j = 0; j < second.Coefficients.Length; j++)
+                {
+                    remainder[remainder.Length - i - j - 1] -= coeff * second[second.Coefficients.Length - j - 1];
+                }
+            }
+
+            return Tuple.Create(new Polynomial(quotient), new Polynomial(remainder));
+        }
+
         public static bool operator >(Polynomial first, Polynomial second)
             => first.CompareTo(second) == 1 ? true : false;
 
@@ -161,31 +216,27 @@
 
         public override string ToString()
         {
-            var builder = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i <= this.Degree; i++)
             {
-                if (i > 0 && this[i] > 0)
-                    builder.Append("+");
-
-                if (this[i] == -1)
-                    builder.Append("-");
-
-                if (Math.Abs(this[i]) != 1 && this[i] != 0)
+                if (this[i] == 0 && i != 0) continue;
+                if (i == 0)
                 {
-                    builder.Append($"{this[i]}");
+                    sb.Append(this[i] + " ");
+                    continue;
                 }
-                if (this[i] != 0)
+                if (this[i] > 0) sb.Append('+');
+                if (i == 1)
                 {
-                    if (i > 0)
-                        builder.Append($"x");
-
-                    if (i > 1)
-                        builder.Append($"^{i}");
+                    sb.Append(this[i] + "*x ");
+                    continue;
                 }
+
+                sb.Append(this[i] + "*x^" + i + ' ');
             }
 
-            return builder.ToString();
+            return sb.ToString();
         }
 
         public override int GetHashCode()
